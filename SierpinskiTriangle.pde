@@ -1,44 +1,136 @@
-float siz=1000, xPlace=0, xWid=250, yPlace=1000, yWid=250;
-boolean invert = false;
+int siz=750;
+boolean invert = true, tri=true, rec=false, circ=false, lin=false;
 public void setup()
 {
 	size(1000,1000);
+	background(0, 0, 255);
 }
 public void draw()
 {
-	sierpinski(xPlace,yPlace,siz);
+	fill(0,0,255);
+	rect(0,0,width,height);
+	noFill();
+	textSize(25);
+	fill(0, 0, 0);
+	text("More Shapes: "+invert,5,25);
+	text("Less Shapes: "+!invert,5,50);
+	text("Triangle Fractal: T",5,75);
+	text("Square Fractal: R",5,100);
+	text("Circle Fractal: E",5,125);
+	text("Line Fractal: Y",5,150);
+	if(tri)
+	{
+		sierpinski(250,750,500);
+	}
+	if(rec)
+	{
+		sierpinski(250,250,500);
+	}
+	if(circ)
+	{
+		sierpinski(500,500,750);
+	}
+	if(lin)
+	{
+		sierpinski(500,500,250);
+	}
 }
 public void mousePressed()
 {
-	if(invert==false)
+	if(invert)
 	{
 		siz/=2;
-		xPlace+=xWid;
-		yPlace-=yWid;
-		xWid/=2;
-		yWid/=2;
+		fill(0,0,255);
 		rect(0,0,width,height);
-	}else if(invert)
+	}else if(invert==false)
 	{
 		siz*=2;
-		xPlace-=xWid;
-		yPlace+=yWid;
-		xWid*=2;
-		yWid*=2;
+		fill(0,0,255);
 		rect(0,0,width,height);
 	}
 }
-public void sierpinski(float x, float y, float len) 
+public void sierpinski(float x, float y, int len) 
 {
-	if(len<=1)
+	if(tri)
 	{
-		triangle(x,y,x+len,y,x+len/2,y-len);
+		if(len<=siz)
+		{
+			fill(255,0,0);
+			triangle(x,y,x+len,y,x+len/2,y-len);
+		}
+		if(len>siz)
+		{
+			fill(255,0,0);
+			sierpinski(x,y,len/2);
+			sierpinski(x+len/2, y,len/2);
+			sierpinski(x+len/4,y-len/2,len/2);
+		}
 	}
-	if(len>1)
+	if(rec)
 	{
-		sierpinski(x,y,len/2);
-		sierpinski(x+len/2, y,len/2);
-		sierpinski(x+len/4,y-len/2,len/2);
+		if(len<=siz)
+		{
+			fill(255,0,0);
+			rect(x, y, len, len);
+		}
+		if(len>siz)
+		{
+			fill(255,0,0);
+			sierpinski(x,y,len/2);
+			sierpinski(x+len/2,y+len/2,len/2);
+			sierpinski(x+len/2,y,len/2);
+			sierpinski(x,y+len/2,len/2);
+		}
+	}
+	if(circ)
+	{
+		if(len<=siz)
+		{
+			fill(255,0,0);
+			ellipse(x, y, len/2, len/2);
+		}
+		if(len>siz)
+		{
+			fill(255,0,0);
+			ellipse(x, y, len/2, len/2);
+			sierpinski(x, y-len/4, len/3);
+			sierpinski(x+(len/4)*cos(44.7676999),y+(len/4)*sin(44.7676999),len/3);
+			sierpinski(x+len/4,y,len/3);
+			sierpinski(x-(len/4)*cos(44.7676999),y+(len/4)*sin(-44.7676999),len/3);
+			sierpinski(x,y+len/4,len/3);
+			sierpinski(x-(len/4)*cos(3.926990816989),y+(len/4)*sin(3.926990816989),len/3);
+			sierpinski(x-len/4,y,len/3);
+			sierpinski(x+(len/4)*cos(3.926990816989),y+(len/4)*sin(-3.926990816989),len/3);
+			// sierpinski(x, y-len/2, len/2);
+			// sierpinski(x+(len/2)*cos(44.7676999),y+(len/2)*sin(44.7676999),len/2);
+			// sierpinski(x+len/2,y,len/2);
+			// sierpinski(x-(len/2)*cos(44.7676999),y+(len/2)*sin(-44.7676999),len/2);
+			// sierpinski(x,y+len/2,len/2);
+			// sierpinski(x-(len/2)*cos(3.926990816989),y+(len/2)*sin(3.926990816989),len/2);
+			// sierpinski(x-len/2,y,len/2);
+			// sierpinski(x+(len/2)*cos(3.926990816989),y+(len/2)*sin(-3.926990816989),len/2);
+		}
+	}
+	if(lin)
+	{
+		if(len<=siz)
+		{
+			stroke(255,0,0);
+			strokeWeight(1);
+			line(x-len,y-len,x+len,y+len);
+			line(x-len,y+len,x+len,y-len);
+		}
+		if(len>siz)
+		{
+			stroke(255,0,0);
+			strokeWeight(1);
+			line(x-len,y-len,x+len,y+len);
+			line(x-len,y+len,x+len,y-len);
+			sierpinski(x-len/2,y-len/2,len/2);
+			sierpinski(x+len/2,y+len/2,len/2);
+			sierpinski(x-len/2,y+len/2,len/2);
+			sierpinski(x+len/2,y-len/2,len/2);
+		}
 	}
 }
 public void keyPressed()
@@ -48,21 +140,29 @@ public void keyPressed()
 		case ' ':
 			invert=!invert;
 		break;
+		case 'e':
+			circ=true;
+			rec=false;
+			tri=false;
+			lin=false;
+		break;
+		case 'r':
+			circ=false;
+			rec=true;
+			tri=false;
+			lin=false;
+		break;
+		case 't':
+			circ=false;
+			rec=false;
+			tri=true;
+			lin=false;
+		break;
+		case 'l':
+			circ=false;
+			rec=false;
+			tri=false;
+			lin=true;
+		break;
 	}
 }
-/*
-If `len` is less than or equal to 20 (or some variable) 
-        * Draw a triangle with the left corner at (`x`,`y`) 
-        and a base and height equal to `len`.
-    * else
-        * recursively call the `sierpinksi` function to draw 
-        a triangle with the left corner at (`x`,`y`) and a 
-        base and height equal to `len/2`.
-        * Again, call the `sierpinksi` function a second 
-        time to draw another triangle a distance of `len/2` 
-        to the right of the first triangle.
-        * Now, call the `sierpinksi` function a third time 
-        to draw a triangle a distance of `len/4` to the right 
-        and `len/2` up from the first triangle. This triangle 
-        should "sit on top" of the first two.
-*/
